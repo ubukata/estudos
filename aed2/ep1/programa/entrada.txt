@@ -1,0 +1,8 @@
+C:\Users\Vitor Ubukata\Desktop\USP\AED2\EP1 - AED2\airports.dat
+C:\Users\Vitor Ubukata\Desktop\USP\AED2\EP1 - AED2\routes.dat
+ESCALAS
+GIG
+3
+JFK
+NRT
+GPH

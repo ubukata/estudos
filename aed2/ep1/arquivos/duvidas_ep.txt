@@ -1,0 +1,33 @@
+Seguem algumas dúvidas que surgiram sobre o enunciado do EP:
+
+- Pode-se assumir que a quantidade de aeroportos (vértices) e rotas (arestas) é fixa?
+
+Não! Durante a correção é provável que, além do conjunto de dados original disponibilizado (airports.dat e routes.dat), também sejam usados subconjuntos menores destes dados. Assim, não se pode assumir que a quantidade de vértices/arestas é fixa.
+
+Contudo, pode-se assumir que o número de vértices/arestas existentes nos arquivos airports.dat/routes.dat seja um limite superior.
+
+- Sobre campos IATA/FAA que possuem string vazia como valor:
+
+Algumas entrada do arquivo airports.dat possuem como valor do campo IATA/FAA uma string vazia (""). Tais entradas devem ser descartadas.
+
+- Qual o valor total de aeroportos e rotas presentes nos arquivos airports.dat/routes.dat?
+
+Dos 7663 registros presentes no arquivo airports.dat, 5744 registros são válidos (isto é, todos os campos relevantes tem valores definidos).
+
+Dos 68820 registros presentes no arquivo routes.dat, 68382 registros são válidos. Contudo, lembre-se que existem rotas repetidas pois são oferecidas por mais de uma companhia aérea. Descontando as rotas repetidas, chega-se a um total de 39468 rotas válidas distintas.
+
+- O que imprimir quando não existir uma rota?
+
+Dado o aeroporto de origem e um aeroporto de destino, no caso de não existir um caminho ligando os dois, seu programa deve imprimir uma linha com o seguinte formato:
+
+<destino i> NAO EXISTE
+
+Por exemplo, se o i-ésimo aeroporto de destino for o JFK e não existir um caminho que vá do aeroporto de origem até ele, a seguinte linha deve ser impressa na saída:
+
+JFK NAO EXISTE
+
+(A mensagem NAO EXISTE, deve ser escrita em *letras maiúsculas* e *sem acento* para evitar qualquer problema com encodings).
+
+
+
+Além destas dúvidas estou mandando (no arquivo fonte em anexo) exemplos de uso da função strtok para quebrar registro (uma linha) em campos. Vejam os comentários do código para informações adicionais.
