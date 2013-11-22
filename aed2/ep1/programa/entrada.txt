@@ -1,8 +1,8 @@
-C:\Users\Vitor Ubukata\Desktop\USP\AED2\EP1 - AED2\airports.dat
-C:\Users\Vitor Ubukata\Desktop\USP\AED2\EP1 - AED2\routes.dat
+C:\Documents and Settings\a6776790\Desktop\estudos-master\aed2\ep1\arquivos\airports2.dat
+C:\Documents and Settings\a6776790\Desktop\estudos-master\aed2\ep1\arquivos\routes2.dat
 ESCALAS
-GIG
+AE1
 3
-JFK
-NRT
-GPH
+AE4
+AE3
+AE5

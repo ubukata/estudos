@@ -83,6 +83,7 @@ Vertice obterVertice(char *linha) {
 	Vertice vertice;
 	
 	vertice.na = 0;
+	vertice.marca = -1;
 	vertice.arestas = NULL;
 	char * dados = strtok(linha, ",");
 	vertice.id = atoi(dados);
@@ -99,7 +100,7 @@ Vertice obterVertice(char *linha) {
 	strcpy(vertice.pais, removeCharacter(vertice.pais, '"'));
 	strcpy(vertice.codigo, removeCharacter(vertice.codigo, '"'));
 	
-	if(strncmp(vertice.codigo, "\N", 3) == 0 || strlen(vertice.codigo) == 0){
+	if(strncmp(vertice.codigo, "\\N", 3) == 0 || strlen(vertice.codigo) == 0){
 		vertice.id = 0;
 	}
 			
@@ -126,6 +127,16 @@ Vertice * pegaVertice(Grafo * g, int id){
 	return NULL;
 }
 
+Vertice * pegaVerticePorCodigo(Grafo * g, char * codigo){
+	int i;
+	for(i = 0; i < g->nv; i++){
+		if(strncmp(g->vertices[i].codigo, codigo, 10) == 0){
+			 return &g->vertices[i];
+		}
+	}
+	return NULL;
+}
+
 int existeAresta(Grafo * g, int u_id, int v_id){
 
 	int achou = FALSE;
@@ -142,7 +153,7 @@ int existeAresta(Grafo * g, int u_id, int v_id){
 	}
 
 	if(!achou){
-			return 0;
+	           return 0;
 	}
 }
 
@@ -259,48 +270,50 @@ Grafo * obterGrafo(DadosEntrada entrada){
 	
     return grafo;
 }
+//#define marca x.I
+//#define próximo y.V
 
-void DIGRAPHbfs( Digraph G, Vertex s) 
-{ 
-   Vertex v, w;
-   conta = 0;
-   for (v = 0; v < G->V; v++)
-      lbl[v] = parent[v] = -1;
-   QUEUEinit( G->V);
-   lbl[s] = conta++; 
-   parent[s] = s;
-   QUEUEput( s); 
-   while (!QUEUEempty( )) {
-      v = QUEUEget( ); 
-      for (w = 0; w < G->V; w++)
-         if (G->adj[v][w] == 1 && lbl[w] == -1) {
-            lbl[w] = conta++; 
-            parent[w] = v;
-            QUEUEput( w); 
-         }
-   }
-   QUEUEfree( ); 
-}
-
-void buscaEmLargura(Grafo g, Vertice origem){
-	Vertex v, w;
-	conta = 0;
-	for (v = 0; v < g->V; v++)
-	  lbl[v] = parent[v] = -1;
-	QUEUEinit( G->V);
-	lbl[s] = conta++; 
-	parent[s] = s;
-	QUEUEput( s); 
-	while (!QUEUEempty( )) {
-	  v = QUEUEget( ); 
-	  for (w = 0; w < G->V; w++)
-	     if (G->adj[v][w] == 1 && lbl[w] == -1) {
-	        lbl[w] = conta++; 
-	        parent[w] = v;
-	        QUEUEput( w); 
-	     }
+void buscaEmLargura(Grafo * g, Vertice * origem){
+    Vertice *v, *w, *ativo, *ultimo, *temp;  
+    Aresta *a;
+    
+    int i;
+    for(i = 0; i < g->nv; i++){
+          v = &g->vertices[i];
+          v->marca = 0;
 	}
-	QUEUEfree( ); 
+	
+    origem->marca = 1;
+    
+    ativo = ultimo = origem;  
+    ultimo->proximo = NULL;
+    
+    while (ativo != NULL) {
+        v = ativo;
+        int achou = FALSE;
+	    a = v->arestas;
+        while(a && !achou){
+            //w = a–>tip;//?????????
+            if (w->marca == 0) {
+                w->marca = 1;
+                w->proximo = NULL;
+                ultimo->proximo = w;
+                ultimo = w; 
+            } 
+            a = a->prox;
+        }
+       ativo = ativo->proximo; 
+    }
+    
+    for(i = 0; i < g->nv; i++){
+          temp = &g->vertices[i];
+          if(temp->proximo == NULL){
+               printf("atual %s, proximo --\n", temp->codigo);
+          }
+          else{
+               printf("atual %s, proximo %d\n", temp->codigo, temp->proximo->id);
+          }
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -318,19 +331,22 @@ int main(int argc, char *argv[]) {
     
     DadosEntrada dadosEntrada = obterDadosDeEntrada(entrada);
     
-    obterGrafo(dadosEntrada);
+    Grafo * grafo = obterGrafo(dadosEntrada);
     
-    if(dadosEntrada.algoritmo == "ESCALAS"){
-    	buscaEmLargura();
+    if(strncmp(dadosEntrada.algoritmo, "ESCALAS", 7) == 0){
+    	printf("comecou busca em largura\n\n");
+        buscaEmLargura(grafo, pegaVerticePorCodigo(grafo, dadosEntrada.origem));
+        printf("terminou busca em largura\n\n");
     }
-    else if(dadosEntrada.algoritmo == "DISTANCIA"){
+    else if(strncmp(dadosEntrada.algoritmo, "DISTANCIA", 9) == 0){
+    	printf("DISTANCIA?");    
     	
     }
     else{
-    	printf("Algoritmo não implementado, somente: ESCALAS ou DISTANCIA");
+    	printf("Algoritmo nao implementado, somente: ESCALAS ou DISTANCIA");
     }
     
     //testarDadosEntrada(dadosEntrada);
-        
+
 	return 0;
 }

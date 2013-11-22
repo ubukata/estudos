@@ -2,7 +2,7 @@
 FileName=EP1.dev
 Name=EP1
 Type=1
-Ver=2
+Ver=1
 ObjFiles=
 Includes=
 Libs=
@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000001000000
-UnitCount=5
+UnitCount=4
 
 [VersionInfo]
 Major=1
@@ -51,7 +51,7 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit2]
-FileName=..\strtok_test.c
+FileName=lista_adj.h
 CompileCpp=0
 Folder=EP1
 Compile=1
@@ -61,16 +61,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit1]
-FileName=..\geodist.c
-CompileCpp=0
-Folder=EP1
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
 FileName=main.c
 CompileCpp=0
 Folder=EP1
@@ -80,8 +70,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit3]
+FileName=geodist.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit4]
-FileName=lista_adj.h
+FileName=geodist.c
 CompileCpp=0
 Folder=EP1
 Compile=1

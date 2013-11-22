@@ -1,7 +1,7 @@
 #define TRUE 1
 #define FALSE 0
 
-typedef struct {
+typedef struct VerticeStruct {
 	int id;
 	char cidade[100];
 	char pais[100];
@@ -11,7 +11,9 @@ typedef struct {
 	double longitude;
 	
 	int na;
-
+	int marca;
+	
+	struct VerticeStruct * proximo;
 	struct ArestaStruct * arestas;
 
 } Vertice;
