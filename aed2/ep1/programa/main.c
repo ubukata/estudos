@@ -338,7 +338,8 @@ void buscaEmLargura(Grafo * g, Vertice * origem){
 void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 	fprintf(saida, "%s %s %d %d\n", entrada.origem, entrada.algoritmo, g->nv, g->na);
 	
-	Vertice *origem, *destino, *temp, *verificando;
+	Vertice *origem, *destino, *temp, *verificando, *ultimoVisitado;
+	ultimoVisitado = NULL;
 	origem = pegaVerticePorCodigo(g, entrada.origem);
 	char **aeroportos = malloc(100 * sizeof(char*));
 	int i;
@@ -347,11 +348,11 @@ void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 	}
 	for(i=0; i < entrada.quantidadeDestinos; i++){
 		int distancia, quantidadeAeroportos;
-		distancia = 0;
 		quantidadeAeroportos = 0;
 		destino = pegaVerticePorCodigo(g, entrada.destinos[i]);
 		temp = destino;
 		verificando = destino->pai;
+		distancia = 0;
 		while(verificando->id != origem->id){
 			Aresta * a = pegaAresta(g, verificando->id, temp->id);
 			distancia = distancia + a->peso;
@@ -360,11 +361,22 @@ void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 			aeroportos[quantidadeAeroportos][2]=verificando->codigo[2];
 			aeroportos[quantidadeAeroportos][3]='\0';
 			quantidadeAeroportos++;
+			ultimoVisitado = verificando;
 			verificando = verificando->pai;
 			temp = verificando;
 		}
 		
+		if(ultimoVisitado == NULL){
+			Aresta * a = pegaAresta(g, origem->id, destino->id);
+			distancia = a->peso;
+		}
+		else{
+			Aresta * a = pegaAresta(g, origem->id, ultimoVisitado->id);
+			distancia = distancia + a->peso;
+		}
+		
 		char listaAeroportos[(quantidadeAeroportos + 2)*4];
+		
 		listaAeroportos[0] = origem->codigo[0];
 		listaAeroportos[1] = origem->codigo[1];
 		listaAeroportos[2] = origem->codigo[2];
