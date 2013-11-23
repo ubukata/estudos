@@ -1,5 +1,5 @@
-C:\Documents and Settings\a6776790\Desktop\estudos-master\aed2\ep1\arquivos\airports2.dat
-C:\Documents and Settings\a6776790\Desktop\estudos-master\aed2\ep1\arquivos\routes2.dat
+C:\Git\estudos\aed2\ep1\arquivos\airports2.dat
+C:\Git\estudos\aed2\ep1\arquivos\routes2.dat
 ESCALAS
 AE1
 3

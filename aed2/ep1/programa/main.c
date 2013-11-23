@@ -137,6 +137,26 @@ Vertice * pegaVerticePorCodigo(Grafo * g, char * codigo){
 	return NULL;
 }
 
+Aresta * pegaAresta(Grafo * g, int u_id, int v_id){
+
+	int achou = FALSE;
+	Vertice * u = pegaVertice(g, u_id);
+	Aresta * a = u->arestas;
+	
+	while(a && !achou){
+		
+		if(a->dst->id == v_id){
+			return a;
+		}
+
+		a = a->prox;
+	}
+
+	if(!achou){
+	    return NULL;
+	}
+}
+
 int existeAresta(Grafo * g, int u_id, int v_id){
 
 	int achou = FALSE;
@@ -153,7 +173,7 @@ int existeAresta(Grafo * g, int u_id, int v_id){
 	}
 
 	if(!achou){
-	           return 0;
+	    return 0;
 	}
 }
 
@@ -270,8 +290,6 @@ Grafo * obterGrafo(DadosEntrada entrada){
 	
     return grafo;
 }
-//#define marca x.I
-//#define próximo y.V
 
 void buscaEmLargura(Grafo * g, Vertice * origem){
     Vertice *v, *w, *ativo, *ultimo, *temp;  
@@ -281,6 +299,8 @@ void buscaEmLargura(Grafo * g, Vertice * origem){
     for(i = 0; i < g->nv; i++){
           v = &g->vertices[i];
           v->marca = 0;
+          v->proximo = NULL;
+          v->pai = NULL;
 	}
 	
     origem->marca = 1;
@@ -290,13 +310,12 @@ void buscaEmLargura(Grafo * g, Vertice * origem){
     
     while (ativo != NULL) {
         v = ativo;
-        int achou = FALSE;
 	    a = v->arestas;
-        while(a && !achou){
-            //w = a–>tip;//?????????
+        while(a){
+            w = a->dst;
             if (w->marca == 0) {
                 w->marca = 1;
-                w->proximo = NULL;
+                w->pai=v; 
                 ultimo->proximo = w;
                 ultimo = w; 
             } 
@@ -305,15 +324,77 @@ void buscaEmLargura(Grafo * g, Vertice * origem){
        ativo = ativo->proximo; 
     }
     
-    for(i = 0; i < g->nv; i++){
+    /*for(i = 0; i < g->nv; i++){
           temp = &g->vertices[i];
-          if(temp->proximo == NULL){
-               printf("atual %s, proximo --\n", temp->codigo);
+          if(temp->pai == NULL){
+               printf("atual %s, pai --\n", temp->codigo);
           }
           else{
-               printf("atual %s, proximo %d\n", temp->codigo, temp->proximo->id);
+               printf("atual %s, pai %d\n", temp->codigo, temp->pai->id);
           }
+	}*/
+}
+
+void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
+	fprintf(saida, "%s %s %d %d\n", entrada.origem, entrada.algoritmo, g->nv, g->na);
+	
+	Vertice *origem, *destino, *temp, *verificando;
+	origem = pegaVerticePorCodigo(g, entrada.origem);
+	char **aeroportos = malloc(100 * sizeof(char*));
+	int i;
+	for(i = 0; i < 100; i++) {
+	  aeroportos[i] = malloc((4) * sizeof(char));
 	}
+	for(i=0; i < entrada.quantidadeDestinos; i++){
+		int distancia, quantidadeAeroportos;
+		distancia = 0;
+		quantidadeAeroportos = 0;
+		destino = pegaVerticePorCodigo(g, entrada.destinos[i]);
+		temp = destino;
+		verificando = destino->pai;
+		while(verificando->id != origem->id){
+			Aresta * a = pegaAresta(g, verificando->id, temp->id);
+			distancia = distancia + a->peso;
+			aeroportos[quantidadeAeroportos][0]=verificando->codigo[0];
+			aeroportos[quantidadeAeroportos][1]=verificando->codigo[1];
+			aeroportos[quantidadeAeroportos][2]=verificando->codigo[2];
+			aeroportos[quantidadeAeroportos][3]='\0';
+			quantidadeAeroportos++;
+			verificando = verificando->pai;
+			temp = verificando;
+		}
+		
+		char listaAeroportos[(quantidadeAeroportos + 2)*4];
+		listaAeroportos[0] = origem->codigo[0];
+		listaAeroportos[1] = origem->codigo[1];
+		listaAeroportos[2] = origem->codigo[2];
+		listaAeroportos[3] = ' ';
+		int contadorLista = 4;
+		
+		int contador;
+		for(contador = quantidadeAeroportos - 1; contador >= 0; contador--){
+			listaAeroportos[contadorLista] = aeroportos[contador][0];
+			contadorLista++;
+			listaAeroportos[contadorLista] = aeroportos[contador][1];
+			contadorLista++;
+			listaAeroportos[contadorLista] = aeroportos[contador][2];
+			contadorLista++;
+			listaAeroportos[contadorLista] = ' ';
+			contadorLista++;
+		}
+		
+		listaAeroportos[contadorLista] = destino->codigo[0];
+		contadorLista++;
+		listaAeroportos[contadorLista] = destino->codigo[1];
+		contadorLista++;
+		listaAeroportos[contadorLista] = destino->codigo[2];
+		contadorLista++;
+		listaAeroportos[contadorLista] = '\0';
+		
+		fprintf(saida, "%s %d %d %s\n", destino->codigo, quantidadeAeroportos + 2, distancia, listaAeroportos);
+	}
+	
+	fclose(saida);
 }
 
 int main(int argc, char *argv[]) {
@@ -336,6 +417,7 @@ int main(int argc, char *argv[]) {
     if(strncmp(dadosEntrada.algoritmo, "ESCALAS", 7) == 0){
     	printf("comecou busca em largura\n\n");
         buscaEmLargura(grafo, pegaVerticePorCodigo(grafo, dadosEntrada.origem));
+        gerarSaidaBuscaEmLargura(grafo, dadosEntrada, saida);
         printf("terminou busca em largura\n\n");
     }
     else if(strncmp(dadosEntrada.algoritmo, "DISTANCIA", 9) == 0){

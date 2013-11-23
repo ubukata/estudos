@@ -14,6 +14,7 @@ typedef struct VerticeStruct {
 	int marca;
 	
 	struct VerticeStruct * proximo;
+	struct VerticeStruct * pai;
 	struct ArestaStruct * arestas;
 
 } Vertice;
