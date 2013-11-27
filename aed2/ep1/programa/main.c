@@ -85,6 +85,9 @@ Vertice obterVertice(char *linha) {
 	vertice.na = 0;
 	vertice.marca = -1;
 	vertice.arestas = NULL;
+	vertice.pai = NULL;
+	vertice.proximo = NULL;
+	vertice.distancia = -1;
 	char * dados = strtok(linha, ",");
 	vertice.id = atoi(dados);
 	strtok(NULL, ",");
@@ -237,7 +240,7 @@ Vertice* obterVertices(char arquivoAeroportos[100], int *numeroVertices){
 
 Grafo * criaGrafo(int numeroVertices, Vertice* vertices){
 	Grafo * g = (Grafo *) malloc (sizeof(Grafo));
-	g->vertices = vertices;//(Vertice *) malloc (numeroVertices * sizeof(Vertice));
+	g->vertices = vertices;
 	g->nv = numeroVertices;
 	g->na = 0;
 
@@ -286,8 +289,6 @@ Grafo * obterGrafo(DadosEntrada entrada){
 	
 	obterArestas(grafo, entrada.arquivoRotas);
 	
-    printf( "numero de arestas: %d \n",  grafo->na);
-	
     return grafo;
 }
 
@@ -323,23 +324,12 @@ void buscaEmLargura(Grafo * g, Vertice * origem){
         }
        ativo = ativo->proximo; 
     }
-    
-    /*for(i = 0; i < g->nv; i++){
-          temp = &g->vertices[i];
-          if(temp->pai == NULL){
-               printf("atual %s, pai --\n", temp->codigo);
-          }
-          else{
-               printf("atual %s, pai %d\n", temp->codigo, temp->pai->id);
-          }
-	}*/
 }
 
-void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
+void gerarSaida(Grafo * g, DadosEntrada entrada, FILE * saida){
 	fprintf(saida, "%s %s %d %d\n", entrada.origem, entrada.algoritmo, g->nv, g->na);
 	
 	Vertice *origem, *destino, *temp, *verificando, *ultimoVisitado;
-	ultimoVisitado = NULL;
 	origem = pegaVerticePorCodigo(g, entrada.origem);
 	char **aeroportos = malloc(100 * sizeof(char*));
 	int i;
@@ -347,6 +337,7 @@ void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 	  aeroportos[i] = malloc((4) * sizeof(char));
 	}
 	for(i=0; i < entrada.quantidadeDestinos; i++){
+		ultimoVisitado = NULL;
 		int distancia, quantidadeAeroportos;
 		quantidadeAeroportos = 0;
 		destino = pegaVerticePorCodigo(g, entrada.destinos[i]);
@@ -362,8 +353,8 @@ void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 			aeroportos[quantidadeAeroportos][3]='\0';
 			quantidadeAeroportos++;
 			ultimoVisitado = verificando;
-			verificando = verificando->pai;
 			temp = verificando;
+			verificando = verificando->pai;
 		}
 		
 		if(ultimoVisitado == NULL){
@@ -409,17 +400,59 @@ void gerarSaidaBuscaEmLargura(Grafo * g, DadosEntrada entrada, FILE * saida){
 	fclose(saida);
 }
 
+Vertice * obterVerticeComMenorDistancia(Grafo * g){
+	int i;
+	Vertice *v = NULL;
+	for(i = 0; i < g->nv; i++){
+		if(v == NULL && g->vertices[i].marca == -1 && g->vertices[i].distancia != -1) {
+			v = &g->vertices[i];
+		}
+		if(v != NULL && g->vertices[i].marca != 1 && g->vertices[i].distancia != -1 && g->vertices[i].distancia < v->distancia){
+			v = &g->vertices[i];
+		}
+	}
+	return v;
+}
+
+
+void dijkstra(Grafo * g, Vertice * origem){
+	Vertice *v, *w, *temp;
+	Aresta *a;
+	origem->distancia = 0;
+	while(1){
+		v = obterVerticeComMenorDistancia(g);
+		if(v == NULL){
+			break;
+		}
+		v->marca = 1;
+		a = v->arestas;
+        while(a){
+            w = a->dst;
+            if (w->marca != 1) {
+            	int possivelDistancia = v->distancia + a->peso;
+            	if(w->distancia == -1 || possivelDistancia < w->distancia){
+            		w->distancia = possivelDistancia;
+            		w->pai = v;
+            	}
+            } 
+            a = a->prox;
+        }
+	}
+}
+
 int main(int argc, char *argv[]) {
-	FILE *entrada = fopen("entrada.txt", "r" );
-	FILE *saida = fopen("saida.txt", "w" );
+	FILE *entrada = fopen(argv[1], "r" );
+	FILE *saida = fopen(argv[2], "w" );
 
     if (entrada == 0)
     {
-        printf( "Arquivo de entrada nao encontrado\n" );
+        printf( "Arquivo de entrada chamado: '%s' nao encontrado\n", argv[1]);
+        return -1;
     }
     if (saida == 0)
     {
-        printf( "Arquivo de saida nao encontrado\n" );
+        printf( "Arquivo de saida chamado: '%s' nao encontrado\n", argv[2]);
+        return -1;
     }
     
     DadosEntrada dadosEntrada = obterDadosDeEntrada(entrada);
@@ -427,20 +460,17 @@ int main(int argc, char *argv[]) {
     Grafo * grafo = obterGrafo(dadosEntrada);
     
     if(strncmp(dadosEntrada.algoritmo, "ESCALAS", 7) == 0){
-    	printf("comecou busca em largura\n\n");
         buscaEmLargura(grafo, pegaVerticePorCodigo(grafo, dadosEntrada.origem));
-        gerarSaidaBuscaEmLargura(grafo, dadosEntrada, saida);
-        printf("terminou busca em largura\n\n");
+        gerarSaida(grafo, dadosEntrada, saida);
     }
     else if(strncmp(dadosEntrada.algoritmo, "DISTANCIA", 9) == 0){
-    	printf("DISTANCIA?");    
+        dijkstra(grafo, pegaVerticePorCodigo(grafo, dadosEntrada.origem));
+        gerarSaida(grafo, dadosEntrada, saida);
     	
     }
     else{
     	printf("Algoritmo nao implementado, somente: ESCALAS ou DISTANCIA");
     }
-    
-    //testarDadosEntrada(dadosEntrada);
 
 	return 0;
 }

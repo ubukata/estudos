@@ -1,0 +1,8 @@
+C:\Git\estudos\aed2\ep1\arquivos\airports2.dat
+C:\Git\estudos\aed2\ep1\arquivos\routes2.dat
+DISTANCIA
+AE1
+3
+AE4
+AE3
+AE5

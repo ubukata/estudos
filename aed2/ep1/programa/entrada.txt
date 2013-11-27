@@ -1,8 +1,8 @@
-C:\Git\estudos\aed2\ep1\arquivos\airports2.dat
-C:\Git\estudos\aed2\ep1\arquivos\routes2.dat
+C:\Git\estudos\aed2\ep1\arquivos\airports.dat
+C:\Git\estudos\aed2\ep1\arquivos\routes.dat
 ESCALAS
-AE1
+GIG
 3
-AE4
-AE3
-AE5
+JFK
+KIR
+BOO

@@ -12,6 +12,7 @@ typedef struct VerticeStruct {
 	
 	int na;
 	int marca;
+	int distancia;
 	
 	struct VerticeStruct * proximo;
 	struct VerticeStruct * pai;
