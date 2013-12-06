@@ -1,3 +1,4 @@
+//VITOR UBUKATA NUMERO USP: 6776640
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -441,8 +442,12 @@ void dijkstra(Grafo * g, Vertice * origem){
 }
 
 int main(int argc, char *argv[]) {
-	FILE *entrada = fopen(argv[1], "r" );
-	FILE *saida = fopen(argv[2], "w" );
+	
+	FILE *entrada = fopen("entrada1_escala.txt", "r" );
+	FILE *saida = fopen("saida.txt", "w" );
+	
+	//FILE *entrada = fopen(argv[1], "r" );
+	//FILE *saida = fopen(argv[2], "w" );
 
     if (entrada == 0)
     {

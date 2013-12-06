@@ -1,0 +1,8 @@
+airports.dat
+routes.dat
+ESCALAS
+GIG
+3
+JFK
+NRT
+CPH

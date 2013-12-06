@@ -1,8 +1,12 @@
 C:\Git\estudos\aed2\ep1\arquivos\airports.dat
 C:\Git\estudos\aed2\ep1\arquivos\routes.dat
-ESCALAS
+DISTANCIA
 GIG
 3
+
 JFK
-KIR
-BOO
+
+NRT
+
+CPH
+

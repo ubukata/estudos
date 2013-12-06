@@ -1,0 +1,16 @@
+airports.dat
+routes.dat
+ESCALAS
+CGH
+10
+GRU
+MAO
+AEP
+MVD
+PDP
+JFK
+NRT
+HEM
+HEL
+LED
+
